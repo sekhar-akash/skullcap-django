@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate,login,logout
 from . import verify
 from .forms import UserCreationForm, VerifyForm
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 
 # Create your views here.
@@ -26,7 +27,6 @@ def Register(request):
             verify.send(form.cleaned_data.get('phone_number'))
             messages.success(request, 'account was successfully created')
             return redirect('verify')
-        print(form.errors)
     else:
         form = CreateUserForm()
     context = {'form':form}
@@ -56,12 +56,11 @@ def SignIn(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password') 
-        print('valid')
 
         user = authenticate(request,email=email,password=password)
 
         if user is not None:
-            print('logged')
+            
             login(request,user)
             if user.is_superadmin:
                 request.session['email']=email

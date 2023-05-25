@@ -1,53 +1,80 @@
-{% extends 'layout/base1.html' %}
+{% extends 'layout/base.html' %}
 {% load static %}
 {% block content %}
 
-    <!-- Page Add Section Begin -->
-    <section class="page-add">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="page-breadcrumb">
-                        <h2>Shirts<span>.</span></h2>
-                        <a href="#">Home</a>
-                        <a href="#">Dresses</a>
-                        <a class="active" href="#">Night Dresses</a>
-                    </div>
+<style>
+    * {box-sizing: border-box;}
+
+.img-zoom-container {
+  position: relative;
+}
+
+.img-zoom-lens {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  /*set the size of the lens:*/
+  width: 40px;
+  height: 40px;
+}
+
+.img-zoom-result {
+  border: 1px solid #d4d4d4;
+  /*set the size of the result div:*/
+  width: 300px;
+  height: 300px;
+}
+
+</style>
+
+<!-- Page Add Section Begin -->
+<section class="page-add">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="page-breadcrumb">
+                    <h2>Shirts<span>.</span></h2>
+                    <a href="#">Home</a>
+                    <a href="#">Dresses</a>
+                    <a class="active" href="#">Night Dresses</a>
                 </div>
-                <div class="col-lg-8">
-                    <img src="img/add.jpg" alt="">
-                </div>
+            </div>
+            <div class="col-lg-8">
+                <img src="img/add.jpg" alt="">
             </div>
         </div>
-    </section>
-    <!-- Page Add Section End -->
+    </div>
+</section>
+<!-- Page Add Section End -->
 
-    <!-- Product Page Section Beign -->
-    <section class="product-page">
-        <div class="container">
-            <div class="product-control">
-                <a href="#">Previous</a>
-                <a href="#">Next</a>
-            </div>
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="product-slider owl-carousel">
-                        <div class="product-img">
-                            <figure>
-                                <img src="{{ single_product.images.url }}" alt="">
-                                <div class="p-status">new</div>
-                            </figure>
-                        </div>
-                        <div class="product-img">
-                            <figure>
-                                <img src="{{ single_product.images.url }}" alt="">
-                                <div class="p-status">new</div>
-                            </figure>
-                        </div>
+<!-- Product Page Section Beign -->
+<section class="product-page">
+    <div class="container">
+        <div class="product-control">
+            <a href="#">Previous</a>
+            <a href="#">Next</a>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="product-slider owl-carousel">
+                    <div class="product-img">
+                        <div class="img-zoom-container">
+                            <img id="myimage" src="{{ single_product.images.url }}" width="300" height="240" alt="Girl">
+                            <div id="myresult" class="img-zoom-result"></div>
+                        </div> 
                     </div>
                     
+                    <div class="product-img">
+                        <figure>
+                            <img src="{{ single_product.images.url }}" alt="">
+                            <div class="p-status">new</div>
+                        </figure>
+                    </div>
                 </div>
-                <div class="col-lg-6">
+
+            </div>
+            <div class="col-lg-6">
+                <form action="{% url 'add_cart' single_product.id %}" method="POST">
+                    {% csrf_token %}
                     <div class="product-content">
                         <h2>{{ single_product.name }}</h2>
                         <div class="pc-meta">
@@ -65,90 +92,176 @@
                             <li><span>Category :</span> {{ single_product.category }}</li>
                             <li><span>Company :</span>{{ single_product.company }}</li>
                         </ul>
+
+                        <h6>CHOOSE SIZE</h6>
+                        <select name="size" class="form-control" style="border-radius: 10px; width: 150px;">
+                            <option value="" disabled selected>select</option>
+                            {% for i in product_variant %}
+                            <option value="{{ i }}">{{ i }}</option>
+                            {% endfor %}
+
+                        </select>
+
+                        <br>
                         {% if single_product.stock <= 0 %}
-                            <h5 class="text-danger">OUT OF STOCK </h5>
+                         <h5 class="text-danger">OUT OF STOCK </h5>
                         {% else %}
-                            <div class="product-quantity">
-                                <div class="pro-qty">
-                                    <input type="text" value="1">
-                                </div>
-                            </div>
-                            <a href="#" class="primary-btn pc-btn">Add to cart</a>
+                         <button type="submit" class="primary-btn pc-btn">Add to cart</button>
                         {% endif %}
+                        
                         <ul class="p-info">
                             <li>Product Information</li>
                             <li>Reviews</li>
                             <li>Product Care</li>
                         </ul>
                     </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Product Page Section End -->
+
+<!-- Related Product Section Begin -->
+<section class="related-product spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="section-title">
+                    <h2>Related Products</h2>
                 </div>
             </div>
         </div>
-    </section>
-    <!-- Product Page Section End -->
-
-    <!-- Related Product Section Begin -->
-    <section class="related-product spad">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <div class="section-title">
-                        <h2>Related Products</h2>
+        <div class="row">
+            <div class="col-lg-3 col-sm-6">
+                <div class="single-product-item">
+                    <figure>
+                        <a href="#"><img src="img/products/img-1.jpg" alt=""></a>
+                        <div class="p-status">new</div>
+                    </figure>
+                    <div class="product-text">
+                        <h6>Green Dress with details</h6>
+                        <p>$22.90</p>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-3 col-sm-6">
-                    <div class="single-product-item">
-                        <figure>
-                            <a href="#"><img src="img/products/img-1.jpg" alt=""></a>
-                            <div class="p-status">new</div>
-                        </figure>
-                        <div class="product-text">
-                            <h6>Green Dress with details</h6>
-                            <p>$22.90</p>
-                        </div>
+            <div class="col-lg-3 col-sm-6">
+                <div class="single-product-item">
+                    <figure>
+                        <a href="#"><img src="img/products/img-2.jpg" alt=""></a>
+                        <div class="p-status sale">sale</div>
+                    </figure>
+                    <div class="product-text">
+                        <h6>Yellow Maxi Dress</h6>
+                        <p>$25.90</p>
                     </div>
                 </div>
-                <div class="col-lg-3 col-sm-6">
-                    <div class="single-product-item">
-                        <figure>
-                            <a href="#"><img src="img/products/img-2.jpg" alt=""></a>
-                            <div class="p-status sale">sale</div>
-                        </figure>
-                        <div class="product-text">
-                            <h6>Yellow Maxi Dress</h6>
-                            <p>$25.90</p>
-                        </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+                <div class="single-product-item">
+                    <figure>
+                        <a href="#"><img src="img/products/img-3.jpg" alt=""></a>
+                        <div class="p-status">new</div>
+                    </figure>
+                    <div class="product-text">
+                        <h6>One piece bodysuit</h6>
+                        <p>$19.90</p>
                     </div>
                 </div>
-                <div class="col-lg-3 col-sm-6">
-                    <div class="single-product-item">
-                        <figure>
-                            <a href="#"><img src="img/products/img-3.jpg" alt=""></a>
-                            <div class="p-status">new</div>
-                        </figure>
-                        <div class="product-text">
-                            <h6>One piece bodysuit</h6>
-                            <p>$19.90</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-sm-6">
-                    <div class="single-product-item">
-                        <figure>
-                            <a href="#"><img src="img/products/img-4.jpg" alt=""></a>
-                            <div class="p-status popular">popular</div>
-                        </figure>
-                        <div class="product-text">
-                            <h6>Blue Dress with details</h6>
-                            <p>$35.50</p>
-                        </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+                <div class="single-product-item">
+                    <figure>
+                        <a href="#"><img src="img/products/img-4.jpg" alt=""></a>
+                        <div class="p-status popular">popular</div>
+                    </figure>
+                    <div class="product-text">
+                        <h6>Blue Dress with details</h6>
+                        <p>$35.50</p>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-    <!-- Related Product Section End -->
+    </div>
+</section>
+<!-- Related Product Section End -->
+<script>
+    // Get the quantity input field and the increment/decrement buttons
+    const qtyInput = document.querySelector('.qty-input');
+    const qtyMinusBtn = document.querySelector('.qty-minus');
+    const qtyPlusBtn = document.querySelector('.qty-plus');
 
-    {% endblock content %}
+    // Add event listeners to the increment/decrement buttons
+    qtyMinusBtn.addEventListener('click', () => {
+        let currentQty = parseInt(qtyInput.value);
+        if (currentQty > 1) {
+            qtyInput.value = currentQty - 1;
+        }
+    });
+    qtyPlusBtn.addEventListener('click', () => {
+        let currentQty = parseInt(qtyInput.value);
+        qtyInput.value = currentQty + 1;
+    });
+
+    //for image zooming script
+    function imageZoom(imgID, resultID) {
+        var img, lens, result, cx, cy;
+        img = document.getElementById(imgID);
+        result = document.getElementById(resultID);
+        /* Create lens: */
+        lens = document.createElement("DIV");
+        lens.setAttribute("class", "img-zoom-lens");
+        /* Insert lens: */
+        img.parentElement.insertBefore(lens, img);
+        /* Calculate the ratio between result DIV and lens: */
+        cx = result.offsetWidth / lens.offsetWidth;
+        cy = result.offsetHeight / lens.offsetHeight;
+        /* Set background properties for the result DIV */
+        result.style.backgroundImage = "url('" + img.src + "')";
+        result.style.backgroundSize = (img.width * cx) + "px " + (img.height * cy) + "px";
+        /* Execute a function when someone moves the cursor over the image, or the lens: */
+        lens.addEventListener("mousemove", moveLens);
+        img.addEventListener("mousemove", moveLens);
+        /* And also for touch screens: */
+        lens.addEventListener("touchmove", moveLens);
+        img.addEventListener("touchmove", moveLens);
+        function moveLens(e) {
+            var pos, x, y;
+            /* Prevent any other actions that may occur when moving over the image */
+            e.preventDefault();
+            /* Get the cursor's x and y positions: */
+            pos = getCursorPos(e);
+            /* Calculate the position of the lens: */
+            x = pos.x - (lens.offsetWidth / 2);
+            y = pos.y - (lens.offsetHeight / 2);
+            /* Prevent the lens from being positioned outside the image: */
+            if (x > img.width - lens.offsetWidth) { x = img.width - lens.offsetWidth; }
+            if (x < 0) { x = 0; }
+            if (y > img.height - lens.offsetHeight) { y = img.height - lens.offsetHeight; }
+            if (y < 0) { y = 0; }
+            /* Set the position of the lens: */
+            lens.style.left = x + "px";
+            lens.style.top = y + "px";
+            /* Display what the lens "sees": */
+            result.style.backgroundPosition = "-" + (x * cx) + "px -" + (y * cy) + "px";
+        }
+        function getCursorPos(e) {
+            var a, x = 0, y = 0;
+            e = e || window.event;
+            /* Get the x and y positions of the image: */
+            a = img.getBoundingClientRect();
+            /* Calculate the cursor's x and y coordinates, relative to the image: */
+            x = e.pageX - a.left;
+            y = e.pageY - a.top;
+            /* Consider any page scrolling: */
+            x = x - window.pageXOffset;
+            y = y - window.pageYOffset;
+            return { x: x, y: y };
+        }
+    }
+</script>
+<script>
+    imageZoom("myimage", "myresult");
+</script>
+
+{% endblock content %}

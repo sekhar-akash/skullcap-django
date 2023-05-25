@@ -14,8 +14,8 @@ def Home(request):
 
 
 
-# @login_required(login_url='usersignin')
-# @verification_required
+@login_required(login_url='usersignin')
+@verification_required
 def LoggedHome(request):
     products = product.objects.all().filter(is_available=True)
     context = {

@@ -1,4 +1,4 @@
-{% extends 'layout/base1.html' %}
+{% extends 'layout/base.html' %}
 {% load static %}
 {% block content %}
 
@@ -36,9 +36,31 @@
                         </div>
                         <div class="cf-right">
                             <span>{{product_count}} Products</span>
-                            <a href="#">2</a>
-                            <a href="#" class="active">4</a>
-                            <a href="#">6</a>
+                            {% if products.has_other_pages %}
+                                {% if products.has_previous %}
+                                    <a href="?page={{products.previous_page_number}}" style="color: black;"><</a>
+                                {% else %}
+                                    <a href="#" class="disabled" style="color: black;"><</a>
+                                {% endif %}
+                                
+                                {% for i in products.paginator.page_range  %}
+                                    {% if products.number == i %}
+                                     <a href="#" class="active">{{i}}</a>
+                                    {% else %}
+                                     <a href="?page={{i}}" class="">{{i}}</a> 
+                                    {% endif %}
+                                 
+                                {% endfor %}
+                                {% if products.has_next %}
+                                 <a href="?page={{products.next_page_number}}" style="color: black;">></a>
+                                {% else %}
+                                 <a href="#" style="color: black;">></a>
+                                {% endif %}
+
+                            {% endif %}
+                        </div>
+                        <div>
+                            
                         </div>
                     </div>
                 </div>

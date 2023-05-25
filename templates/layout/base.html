@@ -52,15 +52,22 @@
                 <div class="header-right">
                     <img src="{% static 'img/icons/search.png' %}" alt="" class="search-trigger">
                     <img src="{% static 'img/icons/man.png' %}" alt="">
-                    <a href="#">
+                    <a href="{% url 'cart' %}">
                         <img src="{% static 'img/icons/bag.png' %}" alt="">
-                        <span>2</span>
+                        <span>{{cart_count}}</span>
                     </a>
                 </div>
+                {% if user.id is None %}
+
                 <div class="user-access">
                     <a href="{% url 'userregister' %}">Register</a>
                     <a href="{% url 'usersignin' %}" class="in">Sign in</a>
                 </div>
+                {% else %}
+                <div class="user-access">
+                    <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a>
+                </div>
+                {% endif %}
                 <nav class="main-menu mobile-menu">
                     <ul>
                         <li><a class="active" href="{% url 'home' %}">Home</a></li>
