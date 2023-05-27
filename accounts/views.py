@@ -8,7 +8,9 @@ from . import verify
 from .forms import UserCreationForm, VerifyForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-
+from carts.models import Cart,CartItem
+from carts.views import _cart_id
+import requests
 
 # Create your views here.
 
@@ -25,7 +27,6 @@ def Register(request):
             myuser.save()
             request.session['email'] = email
             verify.send(form.cleaned_data.get('phone_number'))
-            messages.success(request, 'account was successfully created')
             return redirect('verify')
     else:
         form = CreateUserForm()
@@ -60,6 +61,40 @@ def SignIn(request):
         user = authenticate(request,email=email,password=password)
 
         if user is not None:
+            try:
+                cart=Cart.objects.get(cart_id = _cart_id(request))
+                is_cart_item_exists = CartItem.objects.filter(cart=cart).exists()
+                if is_cart_item_exists:
+                    cart_item = CartItem.objects.filter(cart=cart)
+
+                    product_variation = []
+                    for item in cart_item:
+                        variation = item.variations.all()
+                        product_variation.append(list(variation))
+                    
+                    cart_item = CartItem.objects.filter(user = user)
+                    ex_var_list =[]
+                    id =[]
+                    for item in cart_item:
+                        existing_variation = item.variations.all()
+                        ex_var_list.append(list(existing_variation))
+                        id.append(item.id)
+                    
+                    for pro in product_variation:
+                        if pro in ex_var_list:
+                            index = ex_var_list.index(pro)
+                            item_id = id[index]
+                            item = CartItem.objects.get(id = item_id)
+                            item.quantity += 1
+                            item.user = user
+                            item.save()
+                        else:
+                            cart_item = CartItem.objects.filter(cart = cart)
+                            for item in cart_item:
+                                item.user = user
+                                item.save()       
+            except:
+                pass
             
             login(request,user)
             if user.is_superadmin:
@@ -69,7 +104,15 @@ def SignIn(request):
                 messages.error(request,"the user is blocked")
             else:
                 request.session['email']=email
-                return redirect('loggedhome')
+                url = request.META.get('HTTP_REFERER')
+                try:
+                    query = requests.utils.urlparse(url).query
+                    params = dict(x.split('=') for x in query.split('&'))
+                    if 'next' in params:
+                        nextPage = params['next']
+                        return redirect(nextPage)
+                except:
+                    return redirect('loggedhome')
         else:
             messages.error(request,"Invalid username or password")
             return redirect('usersignin')
@@ -80,3 +123,10 @@ def logoutpage(request):
     logout(request)
     request.session.flush()
     return redirect('home')
+
+
+@login_required(login_url='usersignin')
+def dashboard(request):
+    return render(request, 'dashboard.html')
+    
+

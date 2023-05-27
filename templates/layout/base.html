@@ -51,7 +51,9 @@
                 </div>
                 <div class="header-right">
                     <img src="{% static 'img/icons/search.png' %}" alt="" class="search-trigger">
-                    <img src="{% static 'img/icons/man.png' %}" alt="">
+                    <a href="{% url 'userdashboard' %}">
+                        <img src="{% static 'img/icons/man.png' %}" alt="">
+                    </a>
                     <a href="{% url 'cart' %}">
                         <img src="{% static 'img/icons/bag.png' %}" alt="">
                         <span>{{cart_count}}</span>
