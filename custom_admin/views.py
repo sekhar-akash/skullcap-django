@@ -52,14 +52,15 @@ def add_product(request):
         imageform = ImageFormset(request.POST, request.FILES)
 
         if form.is_valid() and imageform.is_valid():
-            new_product = form.save(commit=False)
-            new_product.save()
+            new_product = form.save()
 
-            for form in imageform:
-                if form.is_valid():
-                    image = form.save(commit=False)
+            
+            for image_form in imageform:
+                if image_form.is_valid():
+                    image = image_form.save(commit=False)
                     image.product = new_product
                     image.save()
+
 
             # Save variant stock
             small_stock = form.cleaned_data['small_stock']
@@ -79,7 +80,12 @@ def add_product(request):
         imageform = ImageFormset()
 
     categories = category.objects.all()
-    return render(request, 'custom_admin/add-product.html', {'form': form, 'categories': categories, 'imageform': imageform})
+    context = {
+        'form': form, 
+        'categories': categories,
+        'imageform': imageform
+        }
+    return render(request, 'custom_admin/add-product.html',context)
 
 
 
@@ -87,31 +93,54 @@ def add_product(request):
 def edit_product(request, id):
     product_obj = get_object_or_404(product, id=id)
 
+    # Exclude duplicate variants from the queryset
+    product_variants = Variant.objects.filter(product=product_obj).distinct()
+
+    ImageFormset = inlineformset_factory(product, Image, form=ImageForm, extra=0)
+
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES, instance=product_obj)
-        imageform = productImageFormset(request.POST, request.FILES, instance=product())
+        imageform = ImageFormset(request.POST, request.FILES, instance=product_obj)
         if form.is_valid() and imageform.is_valid():
-            new_product = form.save(commit=False)
-            new_product.save()
-            imageform.instance = new_product
+            form.save()
             imageform.save()
 
             # Save variant stock
-            small_stock = form.cleaned_data['small_stock']
-            medium_stock = form.cleaned_data['medium_stock']
-            large_stock = form.cleaned_data['large_stock']
+            small_stock = form.cleaned_data.get('small_stock', 0)
+            medium_stock = form.cleaned_data.get('medium_stock', 0)
+            large_stock = form.cleaned_data.get('large_stock', 0)
 
             # Update or create variants based on stock values
-            Variant.objects.update_or_create(product=new_product, variant_name='small', defaults={'stock': small_stock})
-            Variant.objects.update_or_create(product=new_product, variant_name='medium', defaults={'stock': medium_stock})
-            Variant.objects.update_or_create(product=new_product, variant_name='large', defaults={'stock': large_stock})
+            Variant.objects.update_or_create(
+                product=product_obj,
+                variant_name='small',
+                defaults={'stock': small_stock or 0}
+            )
+            Variant.objects.update_or_create(
+                product=product_obj,
+                variant_name='medium',
+                defaults={'stock': medium_stock or 0}
+            )
+            Variant.objects.update_or_create(
+                product=product_obj,
+                variant_name='large',
+                defaults={'stock': large_stock or 0}
+            )
 
             return redirect('products')
     else:
         form = ProductForm(instance=product_obj)
-        imageform = productImageFormset(instance=product())
+        imageform = ImageFormset(instance=product_obj, prefix='image')
 
-    return render(request, 'custom_admin/edit-product.html', {'form': form, 'product': product_obj, 'imageform': imageform})
+    context = {
+        'form': form,
+        'product': product_obj,
+        'imageform': imageform,
+        'product_variants': product_variants,
+    }
+    return render(request, 'custom_admin/edit-product.html', context)
+
+
 
 
 def delete_product(request, product_id):

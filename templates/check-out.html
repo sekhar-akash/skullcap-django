@@ -24,7 +24,8 @@
 <!-- Cart Total Page Begin -->
 <section class="cart-total-page spad">
     <div class="container">
-        <form action="#" class="checkout-form">
+        <form action="{% url 'place_order' %}" class="checkout-form" method="POST">
+            {% csrf_token %}
             <div class="row">
                 <div class="col-lg-12">
                     <h3>Your Information</h3>
@@ -35,10 +36,10 @@
                             <p class="in-name">Name*</p>
                         </div>
                         <div class="col-lg-5">
-                            <input type="text" placeholder="First Name">
+                            {{ form.first_name }}
                         </div>
                         <div class="col-lg-5">
-                            <input type="text" placeholder="Last Name">
+                            {{ form.last_name }}
                         </div>
                     </div>
                     <div class="row">
@@ -46,17 +47,24 @@
                             <p class="in-name">Street Address*</p>
                         </div>
                         <div class="col-lg-10">
-                            <input type="text">
-
+                            {{ form.address_line_1 }}
+                            {{ form.address_line_2 }}
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-lg-2">
                             <p class="in-name">City*</p>
                         </div>
                         <div class="col-lg-10">
-                            <input type="text">
+                            {{ form.city }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <p class="in-name">State*</p>
+                        </div>
+                        <div class="col-lg-10">
+                            {{ form.state }}
                         </div>
                     </div>
                     <div class="row">
@@ -64,7 +72,7 @@
                             <p class="in-name">Country</p>
                         </div>
                         <div class="col-lg-10">
-                            <input type="text">
+                            {{ form.country }}
                         </div>
                     </div>
                     <div class="row">
@@ -72,7 +80,7 @@
                             <p class="in-name">Post Code/ZIP*</p>
                         </div>
                         <div class="col-lg-10">
-                            <input type="text">
+                            {{ form.pin_code }}
                         </div>
                     </div>
                     <div class="row">
@@ -80,9 +88,18 @@
                             <p class="in-name">Phone*</p>
                         </div>
                         <div class="col-lg-10">
-                            <input type="text">
+                            {{ form.phone }}
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <p class="in-name">Email*</p>
+                        </div>
+                        <div class="col-lg-10">
+                            {{ form.email }}
+                        </div>
+                    </div>
+                    
                     <div class="row">
                         <div class="col-lg-12 text-right">
                             <div class="diff-addr">
@@ -162,7 +179,10 @@
                             <input type="radio" id="two">
                             </li>
                         </ul>
-                        <button type="submit">Place your order</button>
+                        <div class="row">
+                            <button type="submit" name="submit" class="site-btn" >Place your order</button>
+                        </div>
+                        
                     </div>
                 </div>
             </div>

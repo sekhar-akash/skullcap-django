@@ -91,17 +91,26 @@
                     </div>
                     <div class="row mt-4 tm-edit-product-row">
                         <div class="col-xl-7 col-lg-7 col-md-12">
-                            <form action="" method="POST" class="tm-edit-product-form">
+                            <form method="POST" class="tm-edit-product-form" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 {{ form.as_p }}
-                                {{imageform.management_form}}
-                                {% for form in imageform  %}
-                                    {{form.as_p}}
+                                
+                                <!-- Display variant quantities -->
+                                {% for variant in product_variants %}
+                                    <div class="form-group">
+                                        <label for="{{ variant.variant_name }}_stock">Stock ({{ variant.variant_name }}):</label>
+                                        <input type="number" name="{{ variant.variant_name }}_stock" id="{{ variant.variant_name }}_stock" value="{{ variant.stock }}" required>
+                                    </div>
                                 {% endfor %}
+                                
+                                {{ imageform.management_form }}
+                                {% for form in imageform %}
+                                    {{ form.as_p }}
+                                {% endfor %}
+                                
                                 <div class="input-group mb-3">
                                     <div class="ml-auto col-xl-8 col-lg-8 col-md-8 col-sm-7 pl-0">
-                                        <button type="submit" class="btn btn-primary">Update
-                                        </button>
+                                        <button type="submit" class="btn btn-primary">Update</button>
                                     </div>
                                 </div>
                             </form>

@@ -3,14 +3,9 @@ from user.models import product, Image, Variant
 from multiupload.fields import MultiFileField
 
 class ProductForm(forms.ModelForm):
-    small_stock = forms.IntegerField(label='Small Stock', required=False)
-    medium_stock = forms.IntegerField(label='Medium Stock', required=False)
-    large_stock = forms.IntegerField(label='Large Stock', required=False)
-    
-
     class Meta:
         model = product
-        fields = ('name', 'slug', 'company','images', 'description', 'price', 'is_available', 'category')
+        fields = ('name', 'slug', 'company', 'images', 'description', 'price', 'is_available', 'category')
         widgets = {
             'description': forms.Textarea(attrs={'rows': 6}),
         }

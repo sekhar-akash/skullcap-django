@@ -62,13 +62,14 @@
                             <div id="myresult" class="img-zoom-result"></div>
                         </div> 
                     </div>
-                    
+                    {% for image in product_images %}
                     <div class="product-img">
                         <figure>
-                            <img src="{{ single_product.images.url }}" alt="">
+                            <img src="{{ image.image.url }}" alt="">
                             <div class="p-status">new</div>
                         </figure>
                     </div>
+                    {% endfor %}
                 </div>
 
             </div>

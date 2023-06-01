@@ -1,4 +1,5 @@
 from django.shortcuts import render,redirect,get_list_or_404
+from orders.forms import OrderForm
 from user.models import product,Variant
 from .models import Cart,CartItem
 from django.core.exceptions import ObjectDoesNotExist
@@ -148,7 +149,6 @@ def cart(request, total=0, quantity=0, cart_items=None):
         for cart_item in cart_items:
             total += (cart_item.Product.price * cart_item.quantity)
             quantity += cart_item.quantity
-            print(cart_item.Product.id)
         shipping = 40
         grand_total = shipping + total
     except ObjectDoesNotExist:
@@ -166,6 +166,8 @@ def cart(request, total=0, quantity=0, cart_items=None):
 
 @login_required(login_url='usersignin')
 def checkout(request, total=0, quantity=0, cart_items=None):
+    if request.method == "POST":
+        print("incheckout funct5ion")
     shipping = 40
     grand_total = 0
     try:
@@ -184,11 +186,15 @@ def checkout(request, total=0, quantity=0, cart_items=None):
     except ObjectDoesNotExist:
         pass
     
+    form = OrderForm()
     context ={
         'total' :total,
         'quantity' :quantity,
         'cart_items' : cart_items,
         'shipping' : shipping,
         'grand_total' : grand_total,
+        'form':form,
     }
     return render(request, 'check-out.html', context)
+    
+    
