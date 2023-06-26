@@ -56,16 +56,11 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="accounts.html">Accounts</a>
                             </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false">
-                                    Settings
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="#">Profile</a>
-                                    <a class="dropdown-item" href="#">Billing</a>
-                                    <a class="dropdown-item" href="#">Customize</a>
-                                </div>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'orders' %}">Orders</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'coupon_manage' %}">Coupons</a>
                             </li>
                         </ul>
                         <ul class="navbar-nav">
@@ -104,6 +99,17 @@
                                 {% endfor %}
                                 
                                 {{ imageform.management_form }}
+                                
+                                <!-- Display current image paths -->
+                                {% for form in imageform %}
+                                    {% if form.instance.pk %}
+                                        <div class="form-group">
+                                            <label for="id_images">Current Image:</label>
+                                            <a href="{{ form.instance.image.url }}" target="_blank">{{ form.instance.image }}</a>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                                
                                 {% for form in imageform %}
                                     {{ form.as_p }}
                                 {% endfor %}

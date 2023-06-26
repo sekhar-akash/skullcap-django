@@ -125,8 +125,6 @@ def logoutpage(request):
     return redirect('home')
 
 
-@login_required(login_url='usersignin')
-def dashboard(request):
-    return render(request, 'dashboard.html')
+
     
 

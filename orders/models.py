@@ -2,6 +2,7 @@ from django.db import models
 from accounts.models import Account
 from user.models import product
 from carts.models import Variant
+from user.models import Address
 
 # Create your models here.
 
@@ -23,11 +24,18 @@ class Order(models.Model):
         ('Accepted', 'Accepted'),
         ('Completed', 'Completed'),
         ('Cancelled', 'Cancelled'),
+        ('Return','Return'),
+        ('ReturnApproved','ReturnApproved'),
     )
+    RETURN_STATUS_CHOICES = (
+    ('Return Requested', 'Return Requested'),
+    ('Return Approved', 'Return Approved'),
+)
 
 
     user = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True)
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null=True)
+    selected_address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True)
     order_number = models.CharField(max_length=30)
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
@@ -45,6 +53,8 @@ class Order(models.Model):
     is_ordered = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    return_reason = models.TextField(blank=True)
+    return_status = models.CharField(max_length=20, choices=RETURN_STATUS_CHOICES, default='New')
 
 
     def full_address(self):
@@ -72,3 +82,13 @@ class OrderProduct(models.Model):
 
     def __str__(self):
         return self.product.name
+
+
+class Return(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    product = models.ForeignKey(OrderProduct, on_delete=models.CASCADE)
+    reason = models.CharField(max_length=200)
+    status = models.CharField(max_length=50, default="pending")
+    user = models.ForeignKey(Account, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

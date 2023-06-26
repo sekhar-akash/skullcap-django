@@ -3,27 +3,53 @@
 {% block content %}
 
 <style>
-    * {box-sizing: border-box;}
+    .image-holder{
+     width: 500px;
+     position: relative;
+     cursor: pointer;
+     >img{
+       width: 100%;
+       height: auto;
+       object-fit: cover;
+     }
+   }
+   .image-preview{
+     width: 400px;
+     height: 500px;
+     overflow: hidden;
+     position: relative;
+     >img{
+       position: absolute;
+       top: 0;
+       left: 0;
+       transform: scale(2);
+       transform-origin: left top;
+     }
+   }
+   
+   .magnifiying-glass{
+     width: 100px;
+     height: 100px;
+     border: 1px dashed black;
+     position: absolute;
+     top: 0;
+     left: 0;
+     background: rgba(0,0,0,0.2);
+   }
+   figure{
+     display: inline-block;
+     vertical-align: top;
+   }
 
-.img-zoom-container {
-  position: relative;
-}
-
-.img-zoom-lens {
-  position: absolute;
-  border: 1px solid #d4d4d4;
-  /*set the size of the lens:*/
-  width: 40px;
-  height: 40px;
-}
-
-.img-zoom-result {
-  border: 1px solid #d4d4d4;
-  /*set the size of the result div:*/
-  width: 300px;
-  height: 300px;
-}
-
+   .zoom_image {
+    overflow: hidden;
+    margin: 0 auto;
+    border-radius: 0.5rem;
+    cursor: zoom-in;
+   }
+    &.zoom_mode_active {
+      cursor: zoom-out;
+   }
 </style>
 
 <!-- Page Add Section Begin -->
@@ -32,10 +58,7 @@
         <div class="row">
             <div class="col-lg-4">
                 <div class="page-breadcrumb">
-                    <h2>Shirts<span>.</span></h2>
-                    <a href="#">Home</a>
-                    <a href="#">Dresses</a>
-                    <a class="active" href="#">Night Dresses</a>
+                    <h2>Helmets<span>.</span></h2>
                 </div>
             </div>
             <div class="col-lg-8">
@@ -48,221 +71,131 @@
 
 <!-- Product Page Section Beign -->
 <section class="product-page">
-    <div class="container">
-        <div class="product-control">
-            <a href="#">Previous</a>
-            <a href="#">Next</a>
-        </div>
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="product-slider owl-carousel">
-                    <div class="product-img">
-                        <div class="img-zoom-container">
-                            <img id="myimage" src="{{ single_product.images.url }}" width="300" height="240" alt="Girl">
-                            <div id="myresult" class="img-zoom-result"></div>
-                        </div> 
-                    </div>
-                    {% for image in product_images %}
-                    <div class="product-img">
-                        <figure>
-                            <img src="{{ image.image.url }}" alt="">
-                            <div class="p-status">new</div>
-                        </figure>
-                    </div>
-                    {% endfor %}
-                </div>
-
-            </div>
-            <div class="col-lg-6">
-                <form action="{% url 'add_cart' single_product.id %}" method="POST">
-                    {% csrf_token %}
-                    <div class="product-content">
-                        <h2>{{ single_product.name }}</h2>
-                        <div class="pc-meta">
-                            <h5>MRP Rs {{ single_product.price }}</h5>
-                            <div class="rating">
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                                <i class="fa fa-star"></i>
-                            </div>
-                        </div>
-                        <p>{{ single_product.description }}</p>
-                        <ul class="tags">
-                            <li><span>Category :</span> {{ single_product.category }}</li>
-                            <li><span>Company :</span>{{ single_product.company }}</li>
-                        </ul>
-
-                        <h6>CHOOSE SIZE</h6>
-                        <select name="size" class="form-control" style="border-radius: 10px; width: 150px;">
-                            <option value="" disabled selected>select</option>
-                            {% for i in product_variant %}
-                            <option value="{{ i }}">{{ i }}</option>
-                            {% endfor %}
-
-                        </select>
-
-                        <br>
-                        {% if single_product.stock <= 0 %}
-                         <h5 class="text-danger">OUT OF STOCK </h5>
-                        {% else %}
-                         <button type="submit" class="primary-btn pc-btn">Add to cart</button>
-                        {% endif %}
-                        
-                        <ul class="p-info">
-                            <li>Product Information</li>
-                            <li>Reviews</li>
-                            <li>Product Care</li>
-                        </ul>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+  <div class="container">
+      <div class="product-control">
+          <a href="#">Previous</a>
+          <a href="#">Next</a>
+      </div>
+      <div class="row">
+          <div class="col-lg-6" id="slide-wrapper">
+              <div class="product-slider owl-carousel">
+                  <div class="col-lg-3">
+                      <figure class="image-holder zoom_image">
+                          <img src="{{single_product.images.url}}" id="product-image" width="300" height="240" alt="#" class="img-fluid rounded">
+                          <div class="image-preview d-none">
+                              <img src="{{single_product.images.url}}" id="image-preview" width="300" height="240" alt="#" class="img-fluid rounded">
+                          </div>
+                          <div class="magnifying-glass"></div>
+                      </figure>
+                  </div>
+                  {% for image in product_images %}
+                  <div class="product-img zoom_image">
+                      <figure>
+                          <img src="{{ image.image.url }}" alt="">
+                          <div class="p-status">new</div>
+                      </figure>
+                  </div>
+                  {% endfor %}
+              </div>
+          </div>
+          <div class="col-lg-6">
+              <form action="{% url 'add_cart' single_product.id %}" method="POST">
+                  {% csrf_token %}
+                  <div class="product-content">
+                      <h2>{{ single_product.name }}</h2>
+                      <div class="pc-meta">
+                          <h5>MRP Rs {{ single_product.price }}</h5>
+                          <div class="rating">
+                              <i class="fa fa-star"></i>
+                              <i class="fa fa-star"></i>
+                              <i class="fa fa-star"></i>
+                              <i class="fa fa-star"></i>
+                              <i class="fa fa-star"></i>
+                          </div>
+                      </div>
+                      <p>{{ single_product.description }}</p>
+                      <ul class="tags">
+                          <li><span>Category :</span> {{ single_product.category }}</li>
+                          <li><span>Company :</span>{{ single_product.company }}</li>
+                      </ul>
+                      <h6>CHOOSE SIZE</h6>
+                      <select name="size" class="form-control" style="border-radius: 10px; width: 150px;">
+                          <option value="" disabled selected>select</option>
+                          {% for i in product_variant %}
+                          <option value="{{ i }}">{{ i }}</option>
+                          {% endfor %}
+                      </select>
+                      <br>
+                      {% if single_product.product.stock <= 0 %}
+                      <h5 class="text-danger">OUT OF STOCK</h5>
+                      {% else %}
+                      <button type="submit" class="primary-btn pc-btn">Add to cart</button>
+                      {% endif %}
+                      <ul class="p-info">
+                          <li></li>
+                          <li></li>
+                          <li></li>
+                      </ul>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
 </section>
 <!-- Product Page Section End -->
 
 <!-- Related Product Section Begin -->
-<section class="related-product spad">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12 text-center">
-                <div class="section-title">
-                    <h2>Related Products</h2>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-3 col-sm-6">
-                <div class="single-product-item">
-                    <figure>
-                        <a href="#"><img src="img/products/img-1.jpg" alt=""></a>
-                        <div class="p-status">new</div>
-                    </figure>
-                    <div class="product-text">
-                        <h6>Green Dress with details</h6>
-                        <p>$22.90</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-sm-6">
-                <div class="single-product-item">
-                    <figure>
-                        <a href="#"><img src="img/products/img-2.jpg" alt=""></a>
-                        <div class="p-status sale">sale</div>
-                    </figure>
-                    <div class="product-text">
-                        <h6>Yellow Maxi Dress</h6>
-                        <p>$25.90</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-sm-6">
-                <div class="single-product-item">
-                    <figure>
-                        <a href="#"><img src="img/products/img-3.jpg" alt=""></a>
-                        <div class="p-status">new</div>
-                    </figure>
-                    <div class="product-text">
-                        <h6>One piece bodysuit</h6>
-                        <p>$19.90</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-sm-6">
-                <div class="single-product-item">
-                    <figure>
-                        <a href="#"><img src="img/products/img-4.jpg" alt=""></a>
-                        <div class="p-status popular">popular</div>
-                    </figure>
-                    <div class="product-text">
-                        <h6>Blue Dress with details</h6>
-                        <p>$35.50</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+
 <!-- Related Product Section End -->
-<script>
-    // Get the quantity input field and the increment/decrement buttons
-    const qtyInput = document.querySelector('.qty-input');
-    const qtyMinusBtn = document.querySelector('.qty-minus');
-    const qtyPlusBtn = document.querySelector('.qty-plus');
-
-    // Add event listeners to the increment/decrement buttons
-    qtyMinusBtn.addEventListener('click', () => {
-        let currentQty = parseInt(qtyInput.value);
-        if (currentQty > 1) {
-            qtyInput.value = currentQty - 1;
-        }
-    });
-    qtyPlusBtn.addEventListener('click', () => {
-        let currentQty = parseInt(qtyInput.value);
-        qtyInput.value = currentQty + 1;
-    });
-
-    //for image zooming script
-    function imageZoom(imgID, resultID) {
-        var img, lens, result, cx, cy;
-        img = document.getElementById(imgID);
-        result = document.getElementById(resultID);
-        /* Create lens: */
-        lens = document.createElement("DIV");
-        lens.setAttribute("class", "img-zoom-lens");
-        /* Insert lens: */
-        img.parentElement.insertBefore(lens, img);
-        /* Calculate the ratio between result DIV and lens: */
-        cx = result.offsetWidth / lens.offsetWidth;
-        cy = result.offsetHeight / lens.offsetHeight;
-        /* Set background properties for the result DIV */
-        result.style.backgroundImage = "url('" + img.src + "')";
-        result.style.backgroundSize = (img.width * cx) + "px " + (img.height * cy) + "px";
-        /* Execute a function when someone moves the cursor over the image, or the lens: */
-        lens.addEventListener("mousemove", moveLens);
-        img.addEventListener("mousemove", moveLens);
-        /* And also for touch screens: */
-        lens.addEventListener("touchmove", moveLens);
-        img.addEventListener("touchmove", moveLens);
-        function moveLens(e) {
-            var pos, x, y;
-            /* Prevent any other actions that may occur when moving over the image */
-            e.preventDefault();
-            /* Get the cursor's x and y positions: */
-            pos = getCursorPos(e);
-            /* Calculate the position of the lens: */
-            x = pos.x - (lens.offsetWidth / 2);
-            y = pos.y - (lens.offsetHeight / 2);
-            /* Prevent the lens from being positioned outside the image: */
-            if (x > img.width - lens.offsetWidth) { x = img.width - lens.offsetWidth; }
-            if (x < 0) { x = 0; }
-            if (y > img.height - lens.offsetHeight) { y = img.height - lens.offsetHeight; }
-            if (y < 0) { y = 0; }
-            /* Set the position of the lens: */
-            lens.style.left = x + "px";
-            lens.style.top = y + "px";
-            /* Display what the lens "sees": */
-            result.style.backgroundPosition = "-" + (x * cx) + "px -" + (y * cy) + "px";
-        }
-        function getCursorPos(e) {
-            var a, x = 0, y = 0;
-            e = e || window.event;
-            /* Get the x and y positions of the image: */
-            a = img.getBoundingClientRect();
-            /* Calculate the cursor's x and y coordinates, relative to the image: */
-            x = e.pageX - a.left;
-            y = e.pageY - a.top;
-            /* Consider any page scrolling: */
-            x = x - window.pageXOffset;
-            y = y - window.pageYOffset;
-            return { x: x, y: y };
-        }
-    }
-</script>
-<script>
-    imageZoom("myimage", "myresult");
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+          var isActiveMode = false;
+          $(".zoom_image")
+            .on("click", function() {
+              isActiveMode = !isActiveMode;
+              if (isActiveMode) {
+                $(this).addClass("zoom_mode_active");
+                if ($(window).width() > 767) {
+                  $(this).children("img").css({ transform: "scale(2)" });
+                } else {
+                  $(this).children("img").css({ transform: "scale(5)" });
+                }
+              } else {
+                $(this).removeClass("zoom_mode_active");
+                $(this).children("img").css({ transform: "scale(1)" });
+              }
+            })
+            .on("mousemove", function(e) {
+              $(this)
+                .children("img")
+                .css({
+                  "transform-origin":
+                    ((e.pageX - $(this).offset().left) / $(this).width()) * 100 +
+                    "% " +
+                    ((e.pageY - $(this).offset().top) / $(this).height()) * 100 +
+                    "%",
+                });
+            });
+        
+        $(document).on("click", function(event) {
+            // Check if the clicked element is not within .zoom_image
+            if (!$(event.target).closest(".zoom_image").length) {
+              $(".zoom_image").removeClass("zoom_mode_active");
+              $(".zoom_image img").css({ transform: "scale(1)" });
+              isActiveMode = false;
+            }
+          });
+      
+          // Reset image zoom when changing the image source
+          function image_gal(img) {
+            var a = img.src;
+            $("#large_img").attr("src", a);
+            $(".zoom_image").removeClass("zoom_mode_active");
+            $(".zoom_image img").css({ transform: "scale(1)" });
+            isActiveMode = false;
+          }
+        });
 </script>
 
 {% endblock content %}

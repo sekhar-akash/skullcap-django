@@ -6,7 +6,4 @@ urlpatterns = [
     path('usersignin/',views.SignIn,name="usersignin"),
     path('verify/',views.verify_code,name='verify'),
     path('logout/',views.logoutpage,name='logout'),
-    path('dashboard/',views.dashboard,name='userdashboard'),
-
-    
 ]

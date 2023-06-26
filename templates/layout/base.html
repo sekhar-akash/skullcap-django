@@ -8,7 +8,7 @@
     <meta name="keywords" content="Yoga, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Violet | Template</title>
+    <title>SKULLCAP</title>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700&display=swap" rel="stylesheet">
@@ -22,7 +22,53 @@
     <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/slicknav.min.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
+    <style>
+        .skull {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: red;
+            text-transform: uppercase;
+          }
 
+          .s{
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: red;
+            text-transform: uppercase;
+          }
+
+          .k {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: black;
+            text-transform: uppercase;
+          }
+          
+          .cap {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: black;
+            text-transform: uppercase;
+          }
+          
+          .skull:hover {
+            text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+          }
+          
+          .cap:hover {
+            text-shadow: 0px 0px 10px rgba(237, 7, 7, 0.5);
+          }
+
+          .s:hover{
+            text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+          }
+          .k:hover{
+            text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+          }
+          
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://www.paypal.com/sdk/js?client-id=AQ5lvKeYG5skFgJGU4ctfVv7gxxA2grTOEmLHKKnms0_z7pMrPGL0qlm1X0E7e0x-PhIQCGP5Uwys2VG&currency=USD"></script>    
 </head>
 
@@ -36,8 +82,9 @@
     <div class="search-model">
         <div class="h-100 d-flex align-items-center justify-content-center">
             <div class="search-close-switch">+</div>
-            <form class="search-model-form">
-                <input type="text" id="search-input" placeholder="Search here.....">
+            <form class="search-model-form" action="{% url 'search' %}" method="GET">
+                <input type="text" class="form-control" id="searchInput" name="keyword" placeholder="Search here.....">
+                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
             </form>
         </div>
     </div>
@@ -48,17 +95,20 @@
     <header class="header-section">
         <div class="container-fluid">
             <div class="inner-header">
-                <div class="logo">
-                    <a href="./index.html"><img src="{% static 'img/logo.png' %}" alt=""></a>
-                </div>
+                <span class="s">S</span>
+                <span class="k">k</span>
+                <span class="skull">ULL</span>
+                <span class="cap">CAP</span>
+
+
                 <div class="header-right">
                     <img src="{% static 'img/icons/search.png' %}" alt="" class="search-trigger">
                     <a href="{% url 'userdashboard' %}">
                         <img src="{% static 'img/icons/man.png' %}" alt="">
                     </a>
-                    <a href="{% url 'cart' %}">
+                    <a href="{% url 'cart' %}" style="margin-left: 10px;">
                         <img src="{% static 'img/icons/bag.png' %}" alt="">
-                        <span>{{cart_count}}</span>
+                        <span>{{ cart_count }}</span>
                     </a>
                 </div>
                 {% if user.id is None %}
@@ -82,7 +132,7 @@
                                 {% endfor %}
                             </ul>
                         </li>
-                        <li><a href="./product-page.html">About</a></li>
+                        <li><a href="{% url 'wishlist:wishlist' %}">Wishlist</a></li>
                         <li><a href="./check-out.html">Blog</a></li>
                         <li><a href="./contact.html">Contact</a></li>
                     </ul>

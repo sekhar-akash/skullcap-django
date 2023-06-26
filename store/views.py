@@ -5,6 +5,7 @@ from carts.models import CartItem
 from django.http import HttpResponse
 from carts.views import _cart_id
 from django.core.paginator import EmptyPage,PageNotAnInteger,Paginator
+from django.db.models import Q
 
 
 # Create your views here.
@@ -53,4 +54,32 @@ def productDetail(request, category_slug, product_slug):
     return render(request,'store/product-page.html', context)
 
 def search(request):
-    return render(request, 'store/categories.html')
+    keyword = request.GET.get('keyword')
+    products = product.objects.none()  # Initialize products with an empty queryset
+    product_count = 0
+
+    if keyword:
+        products = product.objects.order_by('-created_date').filter(
+            Q(description__icontains=keyword) | Q(name__icontains=keyword)
+        )
+        product_count = products.count()
+
+    context = {
+        'products': products,
+        'product_count': product_count,
+    }
+    return render(request, 'store/categories.html', context)
+
+
+
+def product_filter(request):
+    companies = product.objects.values('company').distinct()
+    selected_company = request.GET.get('company')  # Get the selected company from the query parameters
+    filtered_products = product.objects.filter(company=selected_company) if selected_company else product.objects.all()
+
+    context = {
+        'companies': companies,
+        'selected_company': selected_company,
+        'products': filtered_products
+    }
+    return render(request, 'store/categories.html', context)

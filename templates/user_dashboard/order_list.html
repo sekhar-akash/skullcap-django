@@ -1,0 +1,139 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<!-- Page Add Section Begin -->
+<section class="page-add">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="page-breadcrumb">
+                    <h2>Your Orders<span>.</span></h2>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <img src="{% static 'img/add.jpg' %}" alt="Advertisement Image">
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Page Add Section End -->
+
+<!-- Cart Total Page Begin -->
+<section class="cart-total-page spad">
+    <div class="container">
+        <div class="cart-table col-lg-12 pt-5">
+            <div class="table-responsive">
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th class="product-h">Order Number</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Order Total</th>
+                            <th>Created at</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in ord %}
+                        <tr>
+                            <td>
+                                
+                                <a href="{% url 'order_details' order_id=order.id %}">{{ order.order_number }}</a>
+                            </td>
+                            <td class="order-info">{{ order.first_name }}</td>
+                            <td class="order-info">{{ order.phone }}</td>
+                            <td class="order-info">{{ order.order_total }}</td>
+                            <td class="order-info">{{ order.created_at }}</td>
+                            <td class="order-info">{{ order.status }}</td>
+                            <td>
+                                {% if order.status != 'cancelled' %}
+                                    {% if order.status != 'Completed' %}
+                                        <form action="{% url 'cancel_order' order_id=order.id %}" method="POST" class="cancel-form">
+                                            {% csrf_token %}
+                                            <button type="submit" class="cancel-btn">Cancel</button>
+                                        </form>
+                                    {% else %}
+                                        <h5>Delivered</h5>
+                                    {% endif %}
+                                {% else %}
+                                    <h5>Cancelled</h5>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Cart Total Page End -->
+
+<style>
+    /* Additional CSS styles */
+    .page-add {
+        padding: 50px 0;
+        background-color: #f9f9f9;
+        text-align: center;
+    }
+
+    .page-add h2 {
+        font-size: 36px;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .page-add h2 span {
+        color: #4CAF50;
+    }
+
+    .cart-table {
+        margin-top: 50px;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .order-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .order-table th,
+    .order-table td {
+        text-align: center;
+        padding: 12px;
+    }
+
+    .order-table th {
+        background-color: #f9f9f9;
+        font-weight: bold;
+    }
+
+    .order-info {
+        font-size: 16px;
+    }
+
+    .cancel-btn {
+        padding: 8px 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .cancel-btn:hover {
+        background-color: #45A049;
+    }
+</style>
+
+
+{% endblock %}

@@ -21,32 +21,31 @@
               <div class="row justify-content-center">
                 <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
 
-                  <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Register your Account</p>
+                  <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Login to your Account</p>
 
                   <form class="mx-1 mx-md-4" action="" method="POST">
-                  {% csrf_token %}
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                      <label for="email">Email Address:</label>
+                      <input type="email" id="email" name="email" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="password">Password:</label>
+                      <input type="password" id="password" name="password" class="form-control" required>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                      <button type="submit" class="btn btn-success btn-lg">Login</button>
+                    </div>
+                    
+                    <p class="text-center mt-3">Don't have an account? <a href="{% url 'userregister' %}" class="text-decoration-none">Sign up</a>.</p>
 
-                    <div class="d-flex flex-row align-items-center mb-4">
-                      <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
-                      <div class="form-outline flex-fill mb-0">
-                        <label class="form-label" for="email">Your Email Address:</label>
-                        <input type="email" id="email" name="email" required>
-                      </div>
-                    </div>
-                    <div class="d-flex flex-row align-items-center mb-4">
-                      <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
-                      <div class="form-outline flex-fill mb-0">
-                        <label class="form-label" for="password">Create password:</label>
-                        <input type="password" id="password" name="password" required>
-                      </div>
-                    </div>
-
-                    <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                      <button type="submit" class="btn btn-success btn-lg" value="Login">Register</button>
-                    </div>
                     {{form.email.errors}}
                     {{form.non_field_errors}}
                   </form>
+                  
                   {% for message in messages %}
                   <p id="messages">{{message}}</p>
                   {% endfor %}
@@ -55,7 +54,7 @@
                 <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
 
                   <img
-                    src="https://images.news18.com/ibnlive/uploads/2022/04/dulquer-salmaan-16495663223x2.jpg?impolicy=website&width=510&height=356"
+                    src="https://i.pinimg.com/originals/a4/ec/e6/a4ece6e99b5f6fdd41adf58f843188b6.jpg"
                     class="img-fluid" alt="Sample image">
 
                 </div>

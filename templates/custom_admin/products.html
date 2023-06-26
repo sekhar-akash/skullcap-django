@@ -55,16 +55,8 @@
                                 <li class="nav-item">
                                     <a class="nav-link" href="{% url 'accounts' %}">Accounts</a>
                                 </li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false">
-                                        Settings
-                                    </a>
-                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" href="#">Profile</a>
-                                        <a class="dropdown-item" href="#">Billing</a>
-                                        <a class="dropdown-item" href="#">Customize</a>
-                                    </div>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'orders' %}">Orders</a>
                                 </li>
                             </ul>
                             <ul class="navbar-nav">
@@ -100,7 +92,7 @@
                                         <th scope="col">Product Name</th>
                                         <th scope="col">Product image</th>
                                         <th scope="col" class="text-center">is_available</th>
-                                        <th scope="col" class="text-center">In Stock</th>
+                                        <th scope="col" class="text-center">Variant & Stock</th>
                                         <th scope="col">price</th>
                                         <th scope="col">delete</th>
                                         <th scope="col">edit</th>
@@ -109,14 +101,17 @@
                                 <tbody>
                         {% for pro in pro %}
                                     <tr>
-                                        <!-- <th scope="row">
-                                            <input type="checkbox" aria-label="Checkbox">
-                                        </th> -->
+                                        
                                         <td class="tm-product-name">{{pro.id}}</td>
                                         <td class="text-center">{{pro.name}}</td>
                                         <td><img class="rounded-circle me-lg-2" src="{{pro.images.url}}" alt="" style="width: 60px; height: 60px;"></td>
                                         <td class="text-center">{{pro.is_available}}</td>
-                                        <td>{{pro.stock}}</td>
+                                        <td>
+                                            {% for variant in pro.variants.all %}
+                                                <p>{{ variant.variant_name }}</p>
+                                                <p>{{ variant.stock }}</p>
+                                            {% endfor %}
+                                        </td>
                                         <td>{{pro.price}}</td>
                                         <td>
                                             <a href="{% url 'delete_product' product_id=pro.id %}">
@@ -137,76 +132,12 @@
                             </table>
                         </div>
 
-                        <div class="tm-table-mt tm-table-actions-row">
-                            <!-- <div class="tm-table-actions-col-left">
-                                <button class="btn btn-danger">Delete Selected Items</button>
-                            </div> -->
-                            <div class="tm-table-actions-col-right">
-                                <span class="tm-pagination-label">Page</span>
-                                <nav aria-label="Page navigation" class="d-inline-block">
-                                    <ul class="pagination tm-pagination">
-                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                        <li class="page-item">
-                                            <span class="tm-dots d-block">...</span>
-                                        </li>
-                                        <li class="page-item"><a class="page-link" href="#">13</a></li>
-                                        <li class="page-item"><a class="page-link" href="#">14</a></li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
 
-                <!-- <div class="col-xl-4 col-lg-12 tm-md-12 tm-sm-12 tm-col">
-                    <div class="bg-white tm-block h-100">
-                        <h2 class="tm-block-title d-inline-block">Product Categories</h2>
-                        <table class="table table-hover table-striped mt-3">
-                            <tbody>
-                                <tr>
-                                    <td>1. Cras efficitur lacus</td>
-                                    <td class="tm-trash-icon-cell"><i class="fas fa-trash-alt tm-trash-icon"></i></td>
-                                </tr>
-                                <tr>
-                                    <td>2. Pellentesque molestie</td>
-                                    <td class="tm-trash-icon-cell"><i class="fas fa-trash-alt tm-trash-icon"></i></td>
-                                </tr>
-                                <tr>
-                                    <td>3. Sed feugiat nulla</td>
-                                    <td class="tm-trash-icon-cell"><i class="fas fa-trash-alt tm-trash-icon"></i></td>
-                                </tr>
-                                <tr>
-                                    <td>4. Vestibulum varius arcu</td>
-                                    <td class="tm-trash-icon-cell"><i class="fas fa-trash-alt tm-trash-icon"></i></td>
-                                </tr>
-                                <tr>
-                                    <td>5. Aenean eget urna enim</td>
-                                    <td class="tm-trash-icon-cell"><i class="fas fa-trash-alt tm-trash-icon"></i></td>
-                                </tr>
-                                <tr>
-                                    <td>6. Condimentum viverra</td>
-                                    <td class="tm-trash-icon-cell"><i class="fas fa-trash-alt tm-trash-icon"></i></td>
-                                </tr>
-                                <tr>
-                                    <td>7. In malesuada</td>
-                                    <td class="tm-trash-icon-cell"><i class="fas fa-trash-alt tm-trash-icon"></i></td>
-                                </tr>
-                                <tr>
-                                    <td>8. Placerat</td>
-                                    <td class="tm-trash-icon-cell"><i class="fas fa-trash-alt tm-trash-icon"></i></td>
-                                </tr>
-                                <tr>
-                                    <td>9. Donec semper</td>
-                                    <td class="tm-trash-icon-cell"><i class="fas fa-trash-alt tm-trash-icon"></i></td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <a href="#" class="btn btn-primary tm-table-mt">Add New Category</a>
-                    </div>
-                </div> -->
+                
+                </div> 
             </div>
             <footer class="row tm-mt-small">
                 <div class="col-12 font-weight-light">

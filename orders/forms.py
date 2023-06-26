@@ -1,5 +1,5 @@
 from django import forms
-from .models import Order
+from .models import Order,Return
 
 
 class OrderForm(forms.ModelForm):
@@ -19,3 +19,10 @@ class OrderForm(forms.ModelForm):
             'phone': forms.TextInput(attrs={'placeholder': 'Phone'}),
             'email': forms.EmailInput(attrs={'placeholder': 'Email'}),
         }
+
+
+class ReturnForm(forms.Form):
+    reason = forms.CharField(max_length=200, widget=forms.Textarea(attrs={"class":"form-control"}))
+    class Meta:
+        model = Return
+        fields = ['reason']

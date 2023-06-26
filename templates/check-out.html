@@ -24,171 +24,210 @@
 <!-- Cart Total Page Begin -->
 <section class="cart-total-page spad">
     <div class="container">
+        
         <form action="{% url 'place_order' %}" class="checkout-form" method="POST">
             {% csrf_token %}
             <div class="row">
-                <div class="col-lg-12">
-                    <h3>Your Information</h3>
+              <h6 class="checkout__title">Saved Address :</h6>
+              <div class="card-body">
+                <div class="row">
+                  {% if saved_addresses %}
+                  {% for address in saved_addresses %}
+                  <div class="col-md-4">
+                    <div class="card {% if address.status %}border-secondary shadow{% endif %} address{{address.id}} address">
+                      <div class="card-body">
+                        <strong>{{address.full_name}}</strong>
+                        <p class="my-0 card-text">{{address.address_line_1}}</p>
+                        <p class="my-0 card-text">{{address.address_line_2}}</p>
+                        <p class="my-0 card-text">{{address.city}},{{address.state}}</p>
+                        <p class="my-0 card-text">{{address.country}}, PIN :{{address.pin_code}}</p>
+                        <p class="my-0 card-text">{{address.email}}</p>
+                        <p class="my-0 card-text">{{address.phone}}</p>
+                      </div>
+                      {% if address.status %}
+                      <div class="card-footer">
+                        <i class="fa fa-check-circle text-success check{{address.id}} check"></i>
+                        <button style="display:none;" data-address="{{address.id}}" class="btn btn-sm btn-info activate-address btn{{address.id}} actbtn" onclick="changeAdd('{{address.first_name}}', '{{address.last_name}}', '{{address.address_line_1}}', '{{address.address_line_2}}', '{{address.city}}', '{{address.state}}', '{{address.country}}', '{{address.pin_code}}', '{{address.phone}}', '{{address.email}}')">Make default</button>
+                      </div>
+                      {% else %}
+                      <div class="card-footer footer{{address.id}}">
+                        <i style="display:none;" class="fa fa-check-circle text-success check{{address.id}} check"></i>
+                        <button data-address="{{address.id}}" class="btn btn-sm btn-info activate-address btn{{address.id}} actbtn" onclick="changeAdd('{{address.first_name}}', '{{address.last_name}}', '{{address.address_line_1}}', '{{address.address_line_2}}', '{{address.city}}', '{{address.state}}', '{{address.country}}', '{{address.pin_code}}', '{{address.phone}}', '{{address.email}}')">Make default</button>
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                  {% endfor %}
+                  {% else %}
+                  <p>Your Address list is empty.!</p>
+                  {% endif %}
                 </div>
-                <div class="col-lg-9">
-                    <div class="row">
-                        <div class="col-lg-2">
-                            <p class="in-name">Name*</p>
-                        </div>
-                        <div class="col-lg-5">
-                            {{ form.first_name }}
-                        </div>
-                        <div class="col-lg-5">
-                            {{ form.last_name }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-2">
-                            <p class="in-name">Street Address*</p>
-                        </div>
-                        <div class="col-lg-10">
-                            {{ form.address_line_1 }}
-                            {{ form.address_line_2 }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-2">
-                            <p class="in-name">City*</p>
-                        </div>
-                        <div class="col-lg-10">
-                            {{ form.city }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-2">
-                            <p class="in-name">State*</p>
-                        </div>
-                        <div class="col-lg-10">
-                            {{ form.state }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-2">
-                            <p class="in-name">Country</p>
-                        </div>
-                        <div class="col-lg-10">
-                            {{ form.country }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-2">
-                            <p class="in-name">Post Code/ZIP*</p>
-                        </div>
-                        <div class="col-lg-10">
-                            {{ form.pin_code }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-2">
-                            <p class="in-name">Phone*</p>
-                        </div>
-                        <div class="col-lg-10">
-                            {{ form.phone }}
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-2">
-                            <p class="in-name">Email*</p>
-                        </div>
-                        <div class="col-lg-10">
-                            {{ form.email }}
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-lg-12 text-right">
-                            <div class="diff-addr">
-                                <input type="radio" id="one">
-                                <label for="one">Ship to different address</label>
-                            </div>
-                        </div>
-                    </div>
+              </div>
+              <div class="col-lg-12">
+                <h3>Your Information</h3>
+              </div>
+              <div class="col-lg-9">
+                <div class="row">
+                  <div class="col-lg-2">
+                    <p class="in-name">Name*</p>
+                  </div>
+                  <div class="col-lg-5">
+                    {{ form.first_name }}
+                  </div>
+                  <div class="col-lg-5">
+                    {{ form.last_name }}
+                  </div>
                 </div>
-                <div class="col-lg-3">
-                    <div class="order-table">
-                        <div class="cart-item">
-                            <span>Product</span>
-                            <p class="product-name">Blue Dotted Shirt</p>
-                        </div>
-                        <div class="cart-item">
-                            <span>Price</span>
-                            <p>$29</p>
-                        </div>
-                        <div class="cart-item">
-                            <span>Quantity</span>
-                            <p>1</p>
-                        </div>
-                        <div class="cart-item">
-                            <span>Shipping</span>
-                            <p>$10</p>
-                        </div>
-
-                        <div class="cart-total">
-                            <span>Total</span>
-                            <p>$39</p>
-                        </div>
+                <div class="row">
+                  <div class="col-lg-2">
+                    <p class="in-name">Street Address*</p>
+                  </div>
+                  <div class="col-lg-10">
+                    {{ form.address_line_1 }}
+                    {{ form.address_line_2 }}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-2">
+                    <p class="in-name">City*</p>
+                  </div>
+                  <div class="col-lg-10">
+                    {{ form.city }}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-2">
+                    <p class="in-name">State*</p>
+                  </div>
+                  <div class="col-lg-10">
+                    {{ form.state }}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-2">
+                    <p class="in-name">Country</p>
+                  </div>
+                  <div class="col-lg-10">
+                    {{ form.country }}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-2">
+                    <p class="in-name">Post Code/ZIP*</p>
+                  </div>
+                  <div class="col-lg-10">
+                    {{ form.pin_code }}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-2">
+                    <p class="in-name">Phone*</p>
+                  </div>
+                  <div class="col-lg-10">
+                    {{ form.phone }}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-2">
+                    <p class="in-name">Email*</p>
+                  </div>
+                  <div class="col-lg-10">
+                    {{ form.email }}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-12 text-right">
+                    <div class="diff-addr">
+                      <input type="radio" id="one">
+                      <label for="one">Ship to different address</label>
                     </div>
+                  </div>
                 </div>
-                <div class="cart-table col-lg-12 pt-5">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th class="product-h">Product</th>
-                                <th>Price</th>
-                                <th>Size</th>
-                                <th class="quan">Quantity</th>
-                                <th>Total</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for cart_item in cart_items %}
-                            <tr>
-                                <td class="product-col">
-                                    <img src="{{ cart_item.Product.images.url }}" alt="">
-                                    <div class="p-title">
-                                        <h5>{{ cart_item.Product.name }}</h5>
-                                    </div>
-                                </td>
-                                <td class="price-col">₹{{ cart_item.Product.price }}</td>
-                                {% for variations in cart_item.variations.all %}
-                                <td class="price-col">{{ variations}}</td>
-                                {% endfor %}
-                                <td class="price-col">{{ cart_item.quantity }}</td>
-                                <td class="total">₹{{ cart_item.sub_total }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+              </div>
+              <div class="cart-table col-lg-12 pt-5">
+                <table>
+                  <thead>
+                    <tr>
+                      <th class="product-h">Product</th>
+                      <th>Price</th>
+                      <th>Size</th>
+                      <th class="quan">Quantity</th>
+                      <th>Total</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for cart_item in cart_items %}
+                    <tr>
+                      <td class="product-col">
+                        <img src="{{ cart_item.Product.images.url }}" alt="">
+                        <div class="p-title">
+                          <h5>{{ cart_item.Product.name }}</h5>
+                        </div>
+                      </td>
+                      <td class="price-col">₹{{ cart_item.Product.price }}</td>
+                      {% for variations in cart_item.variations.all %}
+                      <td class="price-col">{{ variations}}</td>
+                      {% endfor %}
+                      <td class="price-col">{{ cart_item.quantity }}</td>
+                      <td class="total">₹{{ cart_item.sub_total }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
             </div>
             <div class="row">
-                <div class="col-lg-12">
-                    <div class="payment-method">
-                        <h3>Payment</h3>
-                        <ul>
-                            <li>Paypal <img src="img/paypal.jpg" alt=""></li>
-                            <li>Credit / Debit card <img src="img/mastercard.jpg" alt=""></li>
-                            <li>
-                            <label for="two">Pay when you get the package</label>
-                            <input type="radio" id="two">
-                            </li>
-                        </ul>
-                        <div class="row">
-                            <button type="submit" name="submit" class="site-btn" >Place your order</button>
-                        </div>
-                        
-                    </div>
-                </div>
+              <div class="row">
+                <button type="submit" name="submit" class="site-btn">Place your order</button>
+              </div>
             </div>
-        </form>
+          </form>
     </div>
 </section>
 <!-- Cart Total Page End -->
+<script>
+    function changeAdd(firstName, lastName, addressLine1, addressLine2, city, state, country, pinCode, phone, email) {
+        document.getElementById('id_first_name').value = firstName;
+        document.getElementById('id_last_name').value = lastName;
+        document.getElementById('id_address_line_1').value = addressLine1;
+        document.getElementById('id_address_line_2').value = addressLine2;
+        document.getElementById('id_city').value = city;
+        document.getElementById('id_state').value = state;
+        document.getElementById('id_country').value = country;
+        document.getElementById('id_pin_code').value = pinCode;
+        document.getElementById('id_phone').value = phone;
+        document.getElementById('id_email').value = email;
+      }
+    
+
+$(document).on('click','.activate-address',function(){
+    var to_url = "{% url 'activate-address' %}"
+    var _aId=$(this).attr('data-address');
+    var _vm=$(this);
+
+    $.ajax({
+        url:to_url,
+        data:{
+            'id':_aId,
+        },
+        dataType:'json',
+        success:function(res){
+            if(res.bool==true){
+
+                $(".address").removeClass('shadow border-secondary');
+                $(".address"+_aId).addClass('shadow border-secondary');
+                
+                $(".check").hide();
+                $(".actbtn").show();
+
+                $(".check"+_aId).show();
+                $(".btn"+_aId).hide();
+            }
+        }
+    });
+});
+</script>
+
 
 {% endblock %}

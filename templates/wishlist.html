@@ -1,0 +1,68 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- Page Add Section Begin -->
+<section class="page-add">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="page-breadcrumb">
+                    <h2>WISHLIST<span>.</span></h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Page Add Section End -->
+
+<!-- Categories Page Section Begin -->
+<section class="categories-page spad">
+    <div class="container">
+        <div class="categories-controls">
+            <div class="row">
+                <div class="col-lg-12">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            {% if wishlist_items %}
+            {% for wishlist_item in wishlist_items %}
+            <div class="col-lg-4 col-md-6">
+                <div class="row">
+                    <div class="col-lg-8 col-md-6">
+                        <div class="single-product-item">
+                            <figure>
+                                <a href="{{ wishlist_item.product.get_url }}">
+                                    <img src="{{ wishlist_item.product.images.url }}" alt="">
+                                </a>
+                                <div class="p-status">new</div>
+                            </figure>
+                            
+                            <div class="product-text">
+                                <a href="#">
+                                    <h6><a href="{{ wishlist_item.product.get_url }}" style="color: black;">{{ wishlist_item.product.name }}</a></h6>
+                                    <h6><a href="{{ wishlist_item.product.get_url }}" style="color: black;">{{ wishlist_item.product.company }}</a></h6>
+                                    <p style="color: black;">MRP Rs {{ wishlist_item.product.price }}</p>
+                                </a>
+                            </div>
+                            <td class="product-close">
+                                <form method="POST" action="{% url 'wishlist:remove_from_wishlist' wishlist_item.product.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" onclick="return confirm('Are you sure you want to remove this item from the wishlist?')" style="color: black;">x</button>
+                                </form>
+                            </td>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>Your wishlist is empty.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+<!-- Categories Page Section End -->
+
+{% endblock content %}

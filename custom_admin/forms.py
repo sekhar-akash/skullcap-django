@@ -1,8 +1,13 @@
 from django import forms
 from user.models import product, Image, Variant
 from multiupload.fields import MultiFileField
+from django.core.validators import MinValueValidator
+from .models import Coupon
 
 class ProductForm(forms.ModelForm):
+    small_stock = forms.IntegerField(validators=[MinValueValidator(0)], required=False)
+    medium_stock = forms.IntegerField(validators=[MinValueValidator(0)], required=False)
+    large_stock = forms.IntegerField(validators=[MinValueValidator(0)], required=False)
     class Meta:
         model = product
         fields = ('name', 'slug', 'company', 'images', 'description', 'price', 'is_available', 'category')
@@ -17,15 +22,21 @@ class ProductForm(forms.ModelForm):
         small_stock = self.cleaned_data.get('small_stock')
         medium_stock = self.cleaned_data.get('medium_stock')
         large_stock = self.cleaned_data.get('large_stock')
-        if small_stock is not None:
-            variant_small = Variant(product=instance, variant_name='Small', stock=small_stock)
-            variant_small.save()
-        if medium_stock is not None:
-            variant_medium = Variant(product=instance, variant_name='Medium', stock=medium_stock)
-            variant_medium.save()
-        if large_stock is not None:
-            variant_large = Variant(product=instance, variant_name='Large', stock=large_stock)
-            variant_large.save()
+        Variant.objects.update_or_create(
+            product=instance,
+            variant_name='small',
+            defaults={'stock': small_stock or 0}
+        )
+        Variant.objects.update_or_create(
+            product=instance,
+            variant_name='medium',
+            defaults={'stock': medium_stock or 0}
+        )
+        Variant.objects.update_or_create(
+            product=instance,
+            variant_name='large',
+            defaults={'stock': large_stock or 0}
+        )
         return instance
 
     def __init__(self, *args, **kwargs):
@@ -45,3 +56,15 @@ class ImageForm(forms.ModelForm):
     class Meta:
         model = Image
         fields = ['images']
+
+class CouponForm(forms.ModelForm):
+    class Meta:
+        model = Coupon
+        fields = ['code', 'discount', 'min_amount', 'active', 'valid_from', 'valid_to']
+        widgets = {
+            'code': forms.TextInput(attrs={'class': 'form-control mb-3'}),
+            'discount': forms.NumberInput(attrs={'class': 'form-control mb-3'}),
+            'min_amount': forms.NumberInput(attrs={'class': 'form-control mb-3'}),
+            'valid_from': forms.DateInput(attrs={'class': 'form-control datepicker mb-3'}),
+            'valid_to': forms.DateInput(attrs={'class': 'form-control datepicker mb-3'})
+        }

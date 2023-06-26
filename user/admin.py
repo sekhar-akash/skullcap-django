@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import product,Image,Variant
+from .models import product,Image,Variant,Address
 
 # Register your models here.
 class VariantInline(admin.TabularInline):
@@ -23,5 +23,9 @@ class VariationAdmin(admin.ModelAdmin):
     list_editable = ('is_active',)
     list_filter = ('product', 'variant_name', 'stock')
 
+class AddressAdmin(admin.ModelAdmin):
+    list_display = ('first_name','last_name','phone','email')
+
 admin.site.register(product,ProductAdmin)
 admin.site.register(Variant,VariationAdmin)
+admin.site.register(Address,AddressAdmin)

@@ -4,6 +4,14 @@ from user.models import product,Variant
 from .models import Cart,CartItem
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
+from user.models import Address
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
+from custom_admin.models import Coupon
+from datetime import date
+import json
+from django.utils import timezone
+from decimal import Decimal
 # Create your views here.
 
 def _cart_id(request):
@@ -151,6 +159,11 @@ def cart(request, total=0, quantity=0, cart_items=None):
             quantity += cart_item.quantity
         shipping = 40
         grand_total = shipping + total
+
+        if(request.session.get('total')):
+            grand_total=request.session.get('total')
+            print(grand_total,"***************************")
+
     except ObjectDoesNotExist:
         pass
     
@@ -166,13 +179,12 @@ def cart(request, total=0, quantity=0, cart_items=None):
 
 @login_required(login_url='usersignin')
 def checkout(request, total=0, quantity=0, cart_items=None):
-    if request.method == "POST":
-        print("incheckout funct5ion")
+
     shipping = 40
     grand_total = 0
     try:
         if request.user.is_authenticated:
-            cart_items = CartItem.objects.filter(user = request.user, is_active = True)
+            cart_items = CartItem.objects.filter(user=request.user, is_active=True)
         else:
             cart = Cart.objects.get(cart_id=_cart_id(request))
             cart_items = CartItem.objects.filter(cart=cart, is_active=True)
@@ -180,21 +192,61 @@ def checkout(request, total=0, quantity=0, cart_items=None):
         for cart_item in cart_items:
             total += (cart_item.Product.price * cart_item.quantity)
             quantity += cart_item.quantity
-            print(cart_item.Product.id)
         shipping = 40
         grand_total = shipping + total
+
+        
+        
     except ObjectDoesNotExist:
         pass
-    
+
     form = OrderForm()
-    context ={
-        'total' :total,
-        'quantity' :quantity,
-        'cart_items' : cart_items,
-        'shipping' : shipping,
-        'grand_total' : grand_total,
-        'form':form,
+    saved_addresses = Address.objects.filter(user=request.user).order_by('-id')
+    cadd = Address.objects.filter(user=request.user, status=True).first()
+
+    context = {
+        'total': total,
+        'quantity': quantity,
+        'cart_items': cart_items,
+        'shipping': shipping,
+        'grand_total': grand_total,
+        'form': form,
+        'saved_addresses': saved_addresses,
+        'cadd': cadd
     }
     return render(request, 'check-out.html', context)
-    
-    
+
+
+
+
+
+@require_POST
+def apply_coupon(request):
+    body = json.loads(request.body)
+    grand_total = int(body['grand_total'])
+    coupon_code = body['coupon']
+    try:
+        coupon = Coupon.objects.get(code__iexact=coupon_code)
+    except Coupon.DoesNotExist:
+        data = {
+            "total": grand_total,
+            "message": "Not a Valid Coupon"
+        }
+    else:
+        today = date.today()
+        valid_from = coupon.valid_from.date()
+        valid_to = coupon.valid_to.date()
+        min_amount = int(coupon.min_amount)
+        if min_amount < grand_total and valid_from <= today <= valid_to:
+            grand_total = grand_total - int(coupon.discount)
+            request.session['total'] = grand_total  # Update the session variable
+            data = {
+                "total": grand_total,
+                "message": f"{coupon.code} Applied"
+            }
+        else:
+            data = {
+                "total": grand_total,
+                "message": "Not a Valid Coupon"
+            }
+    return JsonResponse(data)

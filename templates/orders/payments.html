@@ -24,31 +24,28 @@
             <div class="card">
                 <h5 class="card-header">Payment Method</h5>
                 <div class="card-body">
-                    <!-- Set up a container element for the button -->
-                    <div id="paypal-button-container"></div>
+                    <!-- Button for Cash on Delivery -->
+                    <form id="payment-form" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="payment-method">Select Payment Method:</label>
+                            <div class="d-flex">
+                                <!-- <form method="post" action="{% url 'cash_on_delivery' %}">
+                                    {% csrf_token %}
+                                    <button  type="submit" class="btn btn-primary">Cash on Delivery</button>
+                                </form> -->
 
-                </div>
-            </div> 
-            <div class="card">
-                <h5 class="card-header">Review Products</h5>
-                <div class="card-body">
-                  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                </div>
-            </div>     
-        </div>
-        <div class="cart-btn">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="coupon-input">
-                        <input type="text" placeholder="Enter cupone code">
-                    </div>
-                </div>
-                <div class="col-lg-5 offset-lg-1 text-left text-lg-right">
-                    <div class="site-btn clear-btn">Clear Cart</div>
-                    <div class="site-btn update-btn">Update Cart</div>
+                                <div id="paypal-button-container"></div>
+                            </div>
+                            <br>
+                            <a href="{% url 'cash_on_delivery' %}" style="background-color: #007bff; color: #fff; padding: 10px; border-radius: 5px; text-decoration: none;">Cash On Delivery</a>
+                        </div>
+                    </form>
                 </div>
             </div>
+    
         </div>
+        
        
     </div>
     <div class="shopping-method">
@@ -136,7 +133,7 @@
     var url = "{% url 'payments' %}"
     var orderID = "{{order.order_number}}"
     var payment_method= 'PayPal'
-    
+    var redirect_url= "{% url 'order_complete' %}"
     console.log(orderID)
         // Render the PayPal button into #paypal-button-container
     paypal.Buttons({
